@@ -4,7 +4,18 @@
     "type": "project",
     "license": "MIT",
     "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Owor Yoakim",
+            "email": "oworyoakim@gmail.com"
+        },
+        {
+            "name": "Stewart Muhanuzi",
+            "email": "muhanuzistewart@gmail.com"
+        }
+    ],
     "require": {
+        "php": "^8.1",
         "guzzlehttp/guzzle": "^7.5.1"
     },
     "require-dev": {
