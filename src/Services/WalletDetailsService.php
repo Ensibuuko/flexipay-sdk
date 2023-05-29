@@ -27,7 +27,7 @@ class WalletDetailsService extends FlexipayBaseService
         string               $privateKey,
         string               $privateKeyAlias,
         string               $privateKeyFilePath
-    )
+    ) : WalletDetailsResponse
     {
         $token = $this->generateToken($request->clientId);
         $content = "";
