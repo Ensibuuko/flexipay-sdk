@@ -1,1 +1,1 @@
-# flexipay-sdk
+# Flexipay SDK
