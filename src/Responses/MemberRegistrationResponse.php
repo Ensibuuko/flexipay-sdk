@@ -1,8 +1,6 @@
 <?php
 
-namespace Ensibuuko\Flexipay\DataTransferObjects;
-
-use DateTime;
+namespace Ensibuuko\Flexipay\Responses;
 
 class MemberRegistrationResponse
 {

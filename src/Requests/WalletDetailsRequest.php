@@ -1,8 +1,8 @@
 <?php
 
-namespace Ensibuuko\Flexipay\DataTransferObjects;
+namespace Ensibuuko\Flexipay\Requests;
 
-class WalletDetailsRequest
+class WalletDetailsRequest extends BaseRequest
 {
     /**
      * @param string $clientId
@@ -21,5 +21,6 @@ class WalletDetailsRequest
         public string $msisdn,
     )
     {
+        parent::__construct($this->clientId, $this->aggregatorId, $this->password, $saccoId);
     }
 }

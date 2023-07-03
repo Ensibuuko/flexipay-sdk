@@ -1,6 +1,6 @@
 <?php
 
-namespace Ensibuuko\Flexipay\DataTransferObjects;
+namespace Ensibuuko\Flexipay\Responses;
 
 class SaccoOnboardingResponse
 {

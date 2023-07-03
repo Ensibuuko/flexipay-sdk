@@ -1,8 +1,8 @@
 <?php
 
-namespace Ensibuuko\Flexipay\DataTransferObjects;
+namespace Ensibuuko\Flexipay\Requests;
 
-class SaccoOnboardingRequest
+class SaccoOnboardingRequest extends BaseRequest
 {
     /**
      * @param string $clientId
@@ -26,5 +26,6 @@ class SaccoOnboardingRequest
         public string $amount
     )
     {
+        parent::__construct($this->clientId, $this->aggregatorId, $this->password, $saccoId);
     }
 }
