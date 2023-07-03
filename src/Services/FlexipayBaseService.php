@@ -4,18 +4,26 @@ namespace Ensibuuko\Flexipay\Services;
 
 abstract class FlexipayBaseService
 {
+    const HASH_ALGO = 'sha256';
+    
     public function generateToken(
-        string $clientId
+        string $clientId,
+        string $aggregatorId,
+        string $password,
+        string $saccoId,
+        string $requestId,
+        int $amount
     ): string
     {
-        return "";
+        $parsedData = "{$saccoId}{$requestId}{$aggregatorId}{$amount}";
+        $hash = hash_hmac(self::HASH_ALGO, $parsedData, $password, true);
+        return base64_encode($hash);
     }
 
     public function generateRequestSignature(
         string $content,
         string $privateKey,
-        string $privateKeyAlias,
-        string $privateKeyFilePath
+        string $privateKeyAlias
     ): string
     {
         return "";

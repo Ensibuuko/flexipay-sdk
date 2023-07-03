@@ -2,6 +2,7 @@
 
 namespace Ensibuuko\Flexipay\Services;
 
+use Ensibuuko\Flexipay\DataTransferObjects\FlexipayRequestProvider;
 use Ensibuuko\Flexipay\DataTransferObjects\SaccoOnboardingRequest;
 use Ensibuuko\Flexipay\DataTransferObjects\SaccoOnboardingResponse;
 use Ensibuuko\Flexipay\Exceptions\SaccoOnboardingException;
@@ -23,20 +24,22 @@ class SaccoOnboardingService extends FlexipayBaseService
      */
     public function onboard(
         SaccoOnboardingRequest $request,
-        string                 $baseUrl,
-        string                 $clientId,
-        string                 $privateKey,
-        string                 $privateKeyAlias,
-        string                 $privateKeyFilePath
+        FlexipayRequestProvider $requestProvider
     ): SaccoOnboardingResponse
     {
-        $token = $this->generateToken($clientId);
+        $token = $this->generateToken(
+            $request->clientId,
+            $request->aggregatorId,
+            $request->password,
+            $request->saccoId ,
+            $request->requestReference,
+            0
+        );
         $content = "";
         $signature = $this->generateRequestSignature(
             $content,
-            $privateKey,
-            $privateKeyAlias,
-            $privateKeyFilePath
+            $requestProvider->privateKey,
+            $requestProvider->privateKeyAlias
         );
 
         $headers = [
@@ -53,7 +56,7 @@ class SaccoOnboardingService extends FlexipayBaseService
             "Amount" => "0"
         ];
 
-        $url = $baseUrl . self::SACCO_ONBOARDING_URI;
+        $url = $requestProvider->baseUrl . self::SACCO_ONBOARDING_URI;
 
         try {
             $response = $this->httpClient->request('POST', $url, [

@@ -2,6 +2,7 @@
 
 namespace Ensibuuko\Flexipay\Services;
 
+use Ensibuuko\Flexipay\DataTransferObjects\FlexipayRequestProvider;
 use Ensibuuko\Flexipay\DataTransferObjects\WalletDetailsRequest;
 use Ensibuuko\Flexipay\DataTransferObjects\WalletDetailsResponse;
 use Ensibuuko\Flexipay\Exceptions\WalletDetailsException;
@@ -23,19 +24,22 @@ class WalletDetailsService extends FlexipayBaseService
      */
     public function fetchWalletDetails(
         WalletDetailsRequest $request,
-        string               $baseUrl,
-        string               $privateKey,
-        string               $privateKeyAlias,
-        string               $privateKeyFilePath
+        FlexipayRequestProvider $requestProvider
     ) : WalletDetailsResponse
     {
-        $token = $this->generateToken($request->clientId);
+        $token = $this->generateToken(
+            $request->clientId,
+            $request->aggregatorId,
+            $request->password,
+            $request->saccoId ,
+            $request->requestId,
+            0
+        );
         $content = "";
         $signature = $this->generateRequestSignature(
             $content,
-            $privateKey,
-            $privateKeyAlias,
-            $privateKeyFilePath
+            $requestProvider->privateKey,
+            $requestProvider->privateKeyAlias
         );
 
         $headers = [
@@ -43,7 +47,7 @@ class WalletDetailsService extends FlexipayBaseService
             'signature' => $signature,
         ];
 
-        $url = $baseUrl . self::WALLET_DETAILS_URI;
+        $url = $requestProvider->baseUrl . self::WALLET_DETAILS_URI;
 
         $payload = [
             'MSISDN' => $request->msisdn,

@@ -19,6 +19,7 @@
         "guzzlehttp/guzzle": "^7.5.1"
     },
     "require-dev": {
+        "fakerphp/faker": "^1.9.1",
         "mockery/mockery": "^1.4.4",
         "phpunit/phpunit": "^10.1"
     },
