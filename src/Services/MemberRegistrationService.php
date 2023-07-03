@@ -2,6 +2,7 @@
 
 namespace Ensibuuko\Flexipay\Services;
 
+use Ensibuuko\Flexipay\DataTransferObjects\FlexipayRequestProvider;
 use Ensibuuko\Flexipay\DataTransferObjects\MemberRegistrationRequest;
 use Ensibuuko\Flexipay\DataTransferObjects\MemberRegistrationResponse;
 use Ensibuuko\Flexipay\Exceptions\MemberRegistrationException;
@@ -23,19 +24,22 @@ class MemberRegistrationService extends FlexipayBaseService
      */
     public function register(
         MemberRegistrationRequest $request,
-        string                    $baseUrl,
-        string                    $privateKey,
-        string                    $privateKeyAlias,
-        string                    $privateKeyFilePath
+        FlexipayRequestProvider $requestProvider
     ): MemberRegistrationResponse
     {
-        $token = $this->generateToken($request->clientId);
+        $token = $this->generateToken(
+            $request->clientId, 
+            $request->aggregatorId,
+            $request->password,
+            $request->saccoId ,
+            $request->requestId, 
+            0
+        );
         $content = "";
         $signature = $this->generateRequestSignature(
             $content,
-            $privateKey,
-            $privateKeyAlias,
-            $privateKeyFilePath
+            $requestProvider->privateKey,
+            $requestProvider->privateKeyAlias
         );
 
         $headers = [
@@ -69,7 +73,7 @@ class MemberRegistrationService extends FlexipayBaseService
             'customer_data' => $customerData,
         ];
         
-        $url = $baseUrl . self::MEMBER_REGISTRATION_URI;
+        $url = $requestProvider->baseUrl . self::MEMBER_REGISTRATION_URI;
 
         try {
             $response = $this->httpClient->request('POST', $url, [
