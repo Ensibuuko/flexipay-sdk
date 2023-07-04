@@ -28,15 +28,15 @@ class WalletDetailsService extends FlexipayBaseService
      * @throws WalletDetailsException
      */
     public function fetchWalletDetails(
-        WalletDetailsRequest $request,
+        WalletDetailsRequest    $request,
         FlexipayRequestProvider $requestProvider
-    ) : WalletDetailsResponse
+    ): WalletDetailsResponse
     {
         $token = $this->generateToken(
             $request->clientId,
             $request->aggregatorId,
             $request->password,
-            $request->saccoId ,
+            $request->saccoId,
             $request->requestId,
             0
         );

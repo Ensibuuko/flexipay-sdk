@@ -2,4 +2,4 @@
 
 namespace Ensibuuko\Flexipay\Exceptions;
 
-class WalletDetailsException extends \Exception {}
+class WalletDetailsException extends \Exception { }

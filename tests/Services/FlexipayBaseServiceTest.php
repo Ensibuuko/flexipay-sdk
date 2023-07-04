@@ -9,13 +9,13 @@ use GuzzleHttp\Client;
 
 class FlexipayBaseServiceTest extends TestCase
 {
-    
+
     protected function setUp(): void
     {
         parent::setUp();
     }
 
-    public function testTokenCanBeGenerated() : void
+    public function testTokenCanBeGenerated(): void
     {
         $httpClient = new Client();
         $service = new WalletDetailsService($httpClient);
@@ -27,8 +27,8 @@ class FlexipayBaseServiceTest extends TestCase
         $token = $service->generateToken($clientId, $aggregatorId, $password, $saccoId, $requestId, 0);
         $this->assertNotNull($token);
     }
-    
-    public function testGenerateSignatureThrowsAnExceptionWhenPrivateKeyIsNotValid() : void
+
+    public function testGenerateSignatureThrowsAnExceptionWhenPrivateKeyIsNotValid(): void
     {
         $httpClient = new Client();
         $service = new WalletDetailsService($httpClient);
@@ -37,8 +37,8 @@ class FlexipayBaseServiceTest extends TestCase
         $this->expectException(SignatureGenerationException::class);
         $service->generateRequestSignature($content, $privateKey);
     }
-    
-    public function testSignatureCanBeGenerated() : void
+
+    public function testSignatureCanBeGenerated(): void
     {
         $httpClient = new Client();
         $service = new WalletDetailsService($httpClient);

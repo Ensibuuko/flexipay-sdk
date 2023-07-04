@@ -15,7 +15,7 @@ abstract class FlexipayBaseService
         string $password,
         string $saccoId,
         string $requestId,
-        int $amount
+        int    $amount
     ): string
     {
         $parsedData = "{$saccoId}{$requestId}{$aggregatorId}{$amount}";
@@ -32,7 +32,7 @@ abstract class FlexipayBaseService
     public function generateRequestSignature(string $content, string $privateKey): string
     {
         $signature = '';
-        if(openssl_sign($content, $signature, $privateKey, OPENSSL_ALGO_SHA1)) {
+        if (openssl_sign($content, $signature, $privateKey, OPENSSL_ALGO_SHA1)) {
             return base64_encode($signature);
         }
         $message = sprintf(self::SIGNATURE_GENERATION_ERROR_MESSAGE, openssl_error_string());

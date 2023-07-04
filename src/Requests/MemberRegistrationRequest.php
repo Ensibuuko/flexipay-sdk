@@ -19,15 +19,15 @@ class MemberRegistrationRequest extends BaseRequest
      * @param CustomerDetail[] $customerData
      */
     public function __construct(
-        public string $clientId,
-        public string $aggregatorId,
-        public string $password,
-        public string $saccoId,
-        public string $requestId,
+        public string   $clientId,
+        public string   $aggregatorId,
+        public string   $password,
+        public string   $saccoId,
+        public string   $requestId,
         public DateTime $requestTime,
-        public string $narrative,
-        public string $callbackUrl,
-        public array $customerData
+        public string   $narrative,
+        public string   $callbackUrl,
+        public array    $customerData
     )
     {
         parent::__construct($this->clientId, $this->aggregatorId, $this->password, $saccoId);

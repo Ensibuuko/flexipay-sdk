@@ -2,4 +2,4 @@
 
 namespace Ensibuuko\Flexipay\Exceptions;
 
-class SaccoOnboardingException extends \Exception {}
+class SaccoOnboardingException extends \Exception { }

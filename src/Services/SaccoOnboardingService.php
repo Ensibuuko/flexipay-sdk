@@ -28,7 +28,7 @@ class SaccoOnboardingService extends FlexipayBaseService
      * @throws SignatureGenerationException
      */
     public function onboard(
-        SaccoOnboardingRequest $request,
+        SaccoOnboardingRequest  $request,
         FlexipayRequestProvider $requestProvider
     ): SaccoOnboardingResponse
     {
@@ -36,7 +36,7 @@ class SaccoOnboardingService extends FlexipayBaseService
             $request->clientId,
             $request->aggregatorId,
             $request->password,
-            $request->saccoId ,
+            $request->saccoId,
             $request->requestReference,
             0
         );
