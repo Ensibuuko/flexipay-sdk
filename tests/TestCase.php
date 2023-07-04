@@ -13,12 +13,13 @@ use Mockery\MockInterface;
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected Generator $faker;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->faker = Factory::create();
     }
+
     /**
      * This method mocks \GuzzleHttp\Client
      * @param string $method
@@ -31,10 +32,10 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected function mockHttpClient(string $method, string $url, array $options, $responseBody, int $responseStatus = 200, array $responseHeaders = []): MockInterface|LegacyMockInterface|Client
     {
-        if(is_array($responseBody)) {
+        if (is_array($responseBody)) {
             $responseBody = json_encode($responseBody);
         }
-        
+
         $method = strtoupper($method);
 
         $response = new Response($responseStatus, $responseHeaders, $responseBody);
@@ -45,7 +46,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
             ->with($method, $url, $options)
             ->once()
             ->andReturn($response);
-        
+
         return $client;
     }
 }

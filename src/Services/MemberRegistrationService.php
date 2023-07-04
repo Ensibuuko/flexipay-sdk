@@ -30,15 +30,15 @@ class MemberRegistrationService extends FlexipayBaseService
      */
     public function register(
         MemberRegistrationRequest $request,
-        FlexipayRequestProvider $requestProvider
+        FlexipayRequestProvider   $requestProvider
     ): MemberRegistrationResponse
     {
         $token = $this->generateToken(
-            $request->clientId, 
+            $request->clientId,
             $request->aggregatorId,
             $request->password,
-            $request->saccoId ,
-            $request->requestId, 
+            $request->saccoId,
+            $request->requestId,
             0
         );
         $content = "";
@@ -56,7 +56,7 @@ class MemberRegistrationService extends FlexipayBaseService
         ];
 
         $customerData = [];
-        
+
         foreach ($request->customerData as $customerDetail) {
             $customer = [
                 'card_no' => $customerDetail->cardNumber,
@@ -80,7 +80,7 @@ class MemberRegistrationService extends FlexipayBaseService
             'callback_url' => $request->callbackUrl,
             'customer_data' => $customerData,
         ];
-        
+
         $url = $requestProvider->baseUrl . self::MEMBER_REGISTRATION_URI;
 
         try {
@@ -91,17 +91,17 @@ class MemberRegistrationService extends FlexipayBaseService
         } catch (\Throwable $ex) {
             throw new MemberRegistrationException($ex->getMessage(), $ex->getCode());
         }
-        
+
         $contents = $response->getBody()->getContents();
 
         $status = $response->getStatusCode();
         if ($status < 200 || $status > 299) {
             throw new MemberRegistrationException(sprintf(self::FAILURE_MESSAGE, $contents));
         }
-        
+
         $responseArray = json_decode($contents, true);
-        return  new MemberRegistrationResponse(
-            $responseArray['Status'], 
+        return new MemberRegistrationResponse(
+            $responseArray['Status'],
             $responseArray['StatusMessage']
         );
     }

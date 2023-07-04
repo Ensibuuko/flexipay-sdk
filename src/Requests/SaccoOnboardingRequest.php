@@ -19,7 +19,7 @@ class SaccoOnboardingRequest extends BaseRequest
         public string $clientId,
         public string $aggregatorId,
         public string $password,
-        public string $saccoId,  
+        public string $saccoId,
         public string $saccoName,
         public string $saccoAccount,
         public string $requestReference,

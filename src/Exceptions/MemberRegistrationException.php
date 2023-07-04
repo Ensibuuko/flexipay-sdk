@@ -2,4 +2,4 @@
 
 namespace Ensibuuko\Flexipay\Exceptions;
 
-class MemberRegistrationException extends \Exception {}
+class MemberRegistrationException extends \Exception { }
