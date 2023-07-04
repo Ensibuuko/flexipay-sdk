@@ -2,9 +2,10 @@
 
 namespace Ensibuuko\Flexipay\Services;
 
-use Ensibuuko\Flexipay\DataTransferObjects\FlexipayRequestProvider;
-use Ensibuuko\Flexipay\DataTransferObjects\WalletDetailsRequest;
-use Ensibuuko\Flexipay\DataTransferObjects\WalletDetailsResponse;
+use Ensibuuko\Flexipay\Providers\FlexipayRequestProvider;
+use Ensibuuko\Flexipay\Requests\WalletDetailsRequest;
+use Ensibuuko\Flexipay\Responses\WalletDetailsResponse;
+use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
 use Ensibuuko\Flexipay\Exceptions\WalletDetailsException;
 use GuzzleHttp\Client;
 
@@ -20,6 +21,10 @@ class WalletDetailsService extends FlexipayBaseService
     }
 
     /**
+     * @param WalletDetailsRequest $request
+     * @param FlexipayRequestProvider $requestProvider
+     * @return WalletDetailsResponse
+     * @throws SignatureGenerationException
      * @throws WalletDetailsException
      */
     public function fetchWalletDetails(
@@ -38,11 +43,13 @@ class WalletDetailsService extends FlexipayBaseService
         $content = "";
         $signature = $this->generateRequestSignature(
             $content,
-            $requestProvider->privateKey,
-            $requestProvider->privateKeyAlias
+            $requestProvider->privateKey
         );
 
         $headers = [
+            'saccoId' => $request->saccoId,
+            'password' => $request->password,
+            'client_ID' => $request->clientId,
             'token' => $token,
             'signature' => $signature,
         ];

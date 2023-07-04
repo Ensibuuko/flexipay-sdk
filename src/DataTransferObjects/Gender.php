@@ -2,9 +2,9 @@
 
 namespace Ensibuuko\Flexipay\DataTransferObjects;
 
-enum Gender
+enum Gender: string
 {
-    case MALE;
-    case FEMALE;
-    case OTHER;
+    case MALE = "MALE";
+    case FEMALE = "FEMALE";
+    case OTHER = "OTHER";
 }

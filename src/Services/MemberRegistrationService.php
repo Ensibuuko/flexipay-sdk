@@ -2,10 +2,11 @@
 
 namespace Ensibuuko\Flexipay\Services;
 
-use Ensibuuko\Flexipay\DataTransferObjects\FlexipayRequestProvider;
-use Ensibuuko\Flexipay\DataTransferObjects\MemberRegistrationRequest;
-use Ensibuuko\Flexipay\DataTransferObjects\MemberRegistrationResponse;
+use Ensibuuko\Flexipay\Providers\FlexipayRequestProvider;
+use Ensibuuko\Flexipay\Requests\MemberRegistrationRequest;
+use Ensibuuko\Flexipay\Responses\MemberRegistrationResponse;
 use Ensibuuko\Flexipay\Exceptions\MemberRegistrationException;
+use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
 use GuzzleHttp\Client;
 
 class MemberRegistrationService extends FlexipayBaseService
@@ -20,7 +21,12 @@ class MemberRegistrationService extends FlexipayBaseService
     }
 
     /**
+     * Implements bulk registration of members
+     * @param MemberRegistrationRequest $request
+     * @param FlexipayRequestProvider $requestProvider
+     * @return MemberRegistrationResponse
      * @throws MemberRegistrationException
+     * @throws SignatureGenerationException
      */
     public function register(
         MemberRegistrationRequest $request,
@@ -38,11 +44,13 @@ class MemberRegistrationService extends FlexipayBaseService
         $content = "";
         $signature = $this->generateRequestSignature(
             $content,
-            $requestProvider->privateKey,
-            $requestProvider->privateKeyAlias
+            $requestProvider->privateKey
         );
 
         $headers = [
+            'saccoId' => $request->saccoId,
+            'client_ID' => $request->clientId,
+            'password' => $request->password,
             'token' => $token,
             'signature' => $signature,
         ];

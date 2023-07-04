@@ -1,8 +1,9 @@
 <?php
 
-namespace Ensibuuko\Flexipay\DataTransferObjects;
+namespace Ensibuuko\Flexipay\Requests;
 
 use DateTime;
+use Ensibuuko\Flexipay\DataTransferObjects\CustomerDetail;
 
 class MemberRegistrationRequest extends BaseRequest
 {
@@ -29,6 +30,6 @@ class MemberRegistrationRequest extends BaseRequest
         public array $customerData
     )
     {
-        parent::__construct($this->clientId, $this->aggregatorId, $this->password);
+        parent::__construct($this->clientId, $this->aggregatorId, $this->password, $saccoId);
     }
 }

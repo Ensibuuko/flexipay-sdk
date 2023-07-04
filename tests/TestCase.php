@@ -2,6 +2,7 @@
 
 namespace Ensibuuko\Flexipay\Tests;
 
+use Faker\Factory;
 use Faker\Generator;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -16,7 +17,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->faker = new Generator();
+        $this->faker = Factory::create();
     }
     /**
      * This method mocks \GuzzleHttp\Client
