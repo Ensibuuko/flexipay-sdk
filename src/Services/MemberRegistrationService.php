@@ -34,9 +34,8 @@ class MemberRegistrationService extends FlexipayBaseService
     ): MemberRegistrationResponse
     {
         $token = $this->generateToken(
-            $request->clientId,
-            $request->aggregatorId,
-            $request->password,
+            $requestProvider->clientId,
+            $requestProvider->password,
             $request->saccoId,
             $request->requestId,
             0
@@ -49,8 +48,8 @@ class MemberRegistrationService extends FlexipayBaseService
 
         $headers = [
             'saccoId' => $request->saccoId,
-            'client_ID' => $request->clientId,
-            'password' => $request->password,
+            'client_ID' => $requestProvider->clientId,
+            'password' => $requestProvider->password,
             'token' => $token,
             'signature' => $signature,
         ];
@@ -73,8 +72,8 @@ class MemberRegistrationService extends FlexipayBaseService
         }
 
         $payload = [
+            'Client_ID' => $requestProvider->clientId,
             'RequestID' => $request->requestId,
-            'Client_ID' => $request->clientId,
             'no_of_records' => count($request->customerData),
             'Narrative' => $request->narrative,
             'callback_url' => $request->callbackUrl,

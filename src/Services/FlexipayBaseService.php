@@ -11,14 +11,13 @@ abstract class FlexipayBaseService
 
     public function generateToken(
         string $clientId,
-        string $aggregatorId,
         string $password,
         string $saccoId,
         string $requestId,
         int    $amount
     ): string
     {
-        $parsedData = "{$saccoId}{$requestId}{$aggregatorId}{$amount}";
+        $parsedData = "{$saccoId}|{$requestId}|{$clientId}|{$amount}";
         $hash = hash_hmac(self::HASH_ALGO, $parsedData, $password, true);
         return base64_encode($hash);
     }
