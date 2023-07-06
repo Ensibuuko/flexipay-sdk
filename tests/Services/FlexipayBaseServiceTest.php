@@ -20,11 +20,10 @@ class FlexipayBaseServiceTest extends TestCase
         $httpClient = new Client();
         $service = new WalletDetailsService($httpClient);
         $clientId = $this->faker->uuid();
-        $aggregatorId = $this->faker->uuid();
         $password = $this->faker->uuid();
         $saccoId = $this->faker->uuid();
         $requestId = $this->faker->uuid();
-        $token = $service->generateToken($clientId, $aggregatorId, $password, $saccoId, $requestId, 0);
+        $token = $service->generateToken($clientId, $password, $saccoId, $requestId, 0);
         $this->assertNotNull($token);
     }
 

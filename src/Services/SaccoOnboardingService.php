@@ -33,11 +33,10 @@ class SaccoOnboardingService extends FlexipayBaseService
     ): SaccoOnboardingResponse
     {
         $token = $this->generateToken(
-            $request->clientId,
-            $request->aggregatorId,
-            $request->password,
+            $requestProvider->clientId,
+            $requestProvider->password,
             $request->saccoId,
-            $request->requestReference,
+            $request->requestId,
             0
         );
         $content = "";
@@ -48,8 +47,8 @@ class SaccoOnboardingService extends FlexipayBaseService
 
         $headers = [
             'saccoId' => $request->saccoId,
-            'password' => $request->password,
-            'client_ID' => $request->clientId,
+            'password' => $requestProvider->password,
+            'client_ID' => $requestProvider->clientId,
             'token' => $token,
             'signature' => $signature,
         ];
@@ -58,8 +57,8 @@ class SaccoOnboardingService extends FlexipayBaseService
             'saccoId' => $request->saccoId,
             'saccoName' => $request->saccoName,
             'saccoAccount' => $request->saccoAccount,
-            'aggregatorID' => $request->aggregatorId,
-            'requestReference' => $request->requestReference,
+            'aggregatorID' => $requestProvider->clientId,
+            'requestReference' => $request->requestId,
             "Amount" => "0"
         ];
 

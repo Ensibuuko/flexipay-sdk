@@ -34,7 +34,6 @@ class WalletDetailsService extends FlexipayBaseService
     {
         $token = $this->generateToken(
             $request->clientId,
-            $request->aggregatorId,
             $request->password,
             $request->saccoId,
             $request->requestId,
@@ -49,7 +48,7 @@ class WalletDetailsService extends FlexipayBaseService
         $headers = [
             'saccoId' => $request->saccoId,
             'password' => $request->password,
-            'client_ID' => $request->clientId,
+            'client_ID' => $requestProvider->clientId,
             'token' => $token,
             'signature' => $signature,
         ];
