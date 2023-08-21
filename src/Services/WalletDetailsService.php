@@ -14,11 +14,7 @@ class WalletDetailsService extends FlexipayBaseService
     const WALLET_DETAILS_URI = "/flexipayws/v1.0/payments/getwalletdetails";
     const FAILURE_MESSAGE = "Fetch Wallet Details Failed: %s";
 
-    public function __construct(
-        public Client $httpClient
-    )
-    {
-    }
+    public function __construct(public Client $httpClient) { }
 
     /**
      * @param WalletDetailsRequest $request
@@ -33,8 +29,8 @@ class WalletDetailsService extends FlexipayBaseService
     ): WalletDetailsResponse
     {
         $token = $this->generateToken(
-            $request->clientId,
-            $request->password,
+            $requestProvider->clientId,
+            $requestProvider->password,
             $request->saccoId,
             $request->requestId,
             0
@@ -47,7 +43,7 @@ class WalletDetailsService extends FlexipayBaseService
 
         $headers = [
             'saccoId' => $request->saccoId,
-            'password' => $request->password,
+            'password' => $requestProvider->password,
             'client_ID' => $requestProvider->clientId,
             'token' => $token,
             'signature' => $signature,
@@ -58,7 +54,7 @@ class WalletDetailsService extends FlexipayBaseService
         $payload = [
             'MSISDN' => $request->msisdn,
             'REQUEST_ID' => $request->requestId,
-            'CLIENT_ID' => $request->clientId,
+            'CLIENT_ID' => $requestProvider->clientId,
         ];
 
         try {
