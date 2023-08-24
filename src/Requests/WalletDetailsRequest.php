@@ -15,6 +15,6 @@ class WalletDetailsRequest extends BaseRequest
         public string $msisdn,
     )
     {
-        parent::__construct($saccoId);
+        parent::__construct($saccoId, $requestId);
     }
 }

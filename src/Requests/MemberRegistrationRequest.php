@@ -24,6 +24,6 @@ class MemberRegistrationRequest extends BaseRequest
         public array    $customerData
     )
     {
-        parent::__construct($saccoId);
+        parent::__construct($saccoId, $requestId);
     }
 }

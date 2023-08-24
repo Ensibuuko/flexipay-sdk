@@ -6,7 +6,6 @@ use Ensibuuko\Flexipay\Providers\FlexipayRequestProvider;
 use Ensibuuko\Flexipay\Requests\MemberRegistrationRequest;
 use Ensibuuko\Flexipay\Responses\MemberRegistrationResponse;
 use Ensibuuko\Flexipay\Exceptions\MemberRegistrationException;
-use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
 use GuzzleHttp\Client;
 
 class MemberRegistrationService extends FlexipayBaseService
@@ -26,32 +25,19 @@ class MemberRegistrationService extends FlexipayBaseService
      * @param FlexipayRequestProvider $requestProvider
      * @return MemberRegistrationResponse
      * @throws MemberRegistrationException
-     * @throws SignatureGenerationException
      */
     public function register(
         MemberRegistrationRequest $request,
         FlexipayRequestProvider   $requestProvider
     ): MemberRegistrationResponse
     {
-        $token = $this->generateToken(
-            $requestProvider->clientId,
-            $requestProvider->password,
-            $request->saccoId,
-            $request->requestId,
-            0
-        );
-        $content = "";
-        $signature = $this->generateRequestSignature(
-            $content,
-            $requestProvider->privateKey
-        );
+        $token = $this->generateToken($requestProvider->password, $request->requestId);
 
         $headers = [
             'saccoId' => $request->saccoId,
             'client_ID' => $requestProvider->clientId,
             'password' => $requestProvider->password,
             'token' => $token,
-            'signature' => $signature,
         ];
 
         $customerData = [];
