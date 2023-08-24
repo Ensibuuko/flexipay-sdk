@@ -5,7 +5,6 @@ namespace Ensibuuko\Flexipay\Services;
 use Ensibuuko\Flexipay\Providers\FlexipayRequestProvider;
 use Ensibuuko\Flexipay\Requests\WalletDetailsRequest;
 use Ensibuuko\Flexipay\Responses\WalletDetailsResponse;
-use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
 use Ensibuuko\Flexipay\Exceptions\WalletDetailsException;
 use GuzzleHttp\Client;
 
@@ -20,7 +19,6 @@ class WalletDetailsService extends FlexipayBaseService
      * @param WalletDetailsRequest $request
      * @param FlexipayRequestProvider $requestProvider
      * @return WalletDetailsResponse
-     * @throws SignatureGenerationException
      * @throws WalletDetailsException
      */
     public function fetchWalletDetails(
@@ -28,25 +26,13 @@ class WalletDetailsService extends FlexipayBaseService
         FlexipayRequestProvider $requestProvider
     ): WalletDetailsResponse
     {
-        $token = $this->generateToken(
-            $requestProvider->clientId,
-            $requestProvider->password,
-            $request->saccoId,
-            $request->requestId,
-            0
-        );
-        $content = "";
-        $signature = $this->generateRequestSignature(
-            $content,
-            $requestProvider->privateKey
-        );
+        $token = $this->generateToken($requestProvider->password, $request->requestId);
 
         $headers = [
             'saccoId' => $request->saccoId,
             'password' => $requestProvider->password,
             'client_ID' => $requestProvider->clientId,
             'token' => $token,
-            'signature' => $signature,
         ];
 
         $url = $requestProvider->baseUrl . self::WALLET_DETAILS_URI;

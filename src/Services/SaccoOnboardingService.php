@@ -6,7 +6,6 @@ use Ensibuuko\Flexipay\Providers\FlexipayRequestProvider;
 use Ensibuuko\Flexipay\Requests\SaccoOnboardingRequest;
 use Ensibuuko\Flexipay\Responses\SaccoOnboardingResponse;
 use Ensibuuko\Flexipay\Exceptions\SaccoOnboardingException;
-use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
 use GuzzleHttp\Client;
 
 class SaccoOnboardingService extends FlexipayBaseService
@@ -25,32 +24,19 @@ class SaccoOnboardingService extends FlexipayBaseService
      * @param FlexipayRequestProvider $requestProvider
      * @return SaccoOnboardingResponse
      * @throws SaccoOnboardingException
-     * @throws SignatureGenerationException
      */
     public function onboard(
         SaccoOnboardingRequest  $request,
         FlexipayRequestProvider $requestProvider
     ): SaccoOnboardingResponse
     {
-        $token = $this->generateToken(
-            $requestProvider->clientId,
-            $requestProvider->password,
-            $request->saccoId,
-            $request->requestId,
-            0
-        );
-        $content = "";
-        $signature = $this->generateRequestSignature(
-            $content,
-            $requestProvider->privateKey
-        );
-
+        $token = $this->generateToken($requestProvider->password, $request->requestId);
+        
         $headers = [
             'saccoId' => $request->saccoId,
             'password' => $requestProvider->password,
             'client_ID' => $requestProvider->clientId,
             'token' => $token,
-            'signature' => $signature,
         ];
 
         $payload = [
