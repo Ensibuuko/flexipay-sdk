@@ -2,46 +2,48 @@
 
 namespace Ensibuuko\Flexipay\Services;
 
-use Ensibuuko\Flexipay\Providers\FlexipayRequestProvider;
+use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
+use Ensibuuko\Flexipay\Providers\RequestProvider;
 use Ensibuuko\Flexipay\Requests\WalletDetailsRequest;
 use Ensibuuko\Flexipay\Responses\WalletDetailsResponse;
 use Ensibuuko\Flexipay\Exceptions\WalletDetailsException;
-use GuzzleHttp\Client;
 
 class WalletDetailsService extends FlexipayBaseService
 {
-    const WALLET_DETAILS_URI = "/flexipayws/v1.0/payments/getwalletdetails";
     const FAILURE_MESSAGE = "Fetch Wallet Details Failed: %s";
-
-    public function __construct(public Client $httpClient) { }
 
     /**
      * @param WalletDetailsRequest $request
-     * @param FlexipayRequestProvider $requestProvider
+     * @param RequestProvider $requestProvider
      * @return WalletDetailsResponse
      * @throws WalletDetailsException
+     * @throws \Ensibuuko\Flexipay\Exceptions\FetchTokenException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws SignatureGenerationException
      */
     public function fetchWalletDetails(
         WalletDetailsRequest    $request,
-        FlexipayRequestProvider $requestProvider
+        RequestProvider $requestProvider
     ): WalletDetailsResponse
     {
-        $token = $this->generateToken($requestProvider->password, $request->requestId);
-
-        $headers = [
-            'saccoId' => $request->saccoId,
-            'password' => $requestProvider->password,
-            'client_ID' => $requestProvider->clientId,
-            'token' => $token,
-        ];
-
-        $url = $requestProvider->baseUrl . self::WALLET_DETAILS_URI;
-
+        $token = $this->generateToken($requestProvider);
         $payload = [
             'MSISDN' => $request->msisdn,
             'REQUEST_ID' => $request->requestId,
             'CLIENT_ID' => $requestProvider->clientId,
         ];
+        
+        $content = json_encode($payload);
+        $signature = $this->generateRequestSignature($content, $requestProvider->privateKey);
+
+        $headers = [
+            'saccoId' => $request->saccoId,
+            'password' => $requestProvider->password,
+            'Authorization' => "Bearer {$token}",
+            'x-signature' => $signature,
+        ];
+
+        $url = $requestProvider->baseUrl . self::SACCO_DETAILS_URI;
 
         try {
             $response = $this->httpClient->request('POST', $url, [

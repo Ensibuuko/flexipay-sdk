@@ -2,43 +2,31 @@
 
 namespace Ensibuuko\Flexipay\Services;
 
-use Ensibuuko\Flexipay\Providers\FlexipayRequestProvider;
+use Ensibuuko\Flexipay\Providers\RequestProvider;
 use Ensibuuko\Flexipay\Requests\MemberRegistrationRequest;
 use Ensibuuko\Flexipay\Responses\MemberRegistrationResponse;
 use Ensibuuko\Flexipay\Exceptions\MemberRegistrationException;
-use GuzzleHttp\Client;
 
 class MemberRegistrationService extends FlexipayBaseService
 {
-    const MEMBER_REGISTRATION_URI = "/flexipayws/v1.0/registration/api";
     const FAILURE_MESSAGE = "Member Registration Failed %s";
-
-    public function __construct(
-        public Client $httpClient
-    )
-    {
-    }
 
     /**
      * Implements bulk registration of members
      * @param MemberRegistrationRequest $request
-     * @param FlexipayRequestProvider $requestProvider
+     * @param RequestProvider $requestProvider
      * @return MemberRegistrationResponse
      * @throws MemberRegistrationException
+     * @throws \Ensibuuko\Flexipay\Exceptions\FetchTokenException
+     * @throws \Ensibuuko\Flexipay\Exceptions\SignatureGenerationException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function register(
         MemberRegistrationRequest $request,
-        FlexipayRequestProvider   $requestProvider
+        RequestProvider $requestProvider
     ): MemberRegistrationResponse
     {
-        $token = $this->generateToken($requestProvider->password, $request->requestId);
-
-        $headers = [
-            'saccoId' => $request->saccoId,
-            'client_ID' => $requestProvider->clientId,
-            'password' => $requestProvider->password,
-            'token' => $token,
-        ];
+        $token = $this->generateToken($requestProvider);
 
         $customerData = [];
 
@@ -66,7 +54,18 @@ class MemberRegistrationService extends FlexipayBaseService
             'customer_data' => $customerData,
         ];
 
-        $url = $requestProvider->baseUrl . self::MEMBER_REGISTRATION_URI;
+        $content = json_encode($payload);
+        $signature = $this->generateRequestSignature($content, $requestProvider->privateKey);
+
+        $headers = [
+            'saccoId' => $request->saccoId,
+            'client_ID' => $requestProvider->clientId,
+            'password' => $requestProvider->password,
+            'Authorization' => "Bearer {$token}",
+            'x-signature' => $signature
+        ];
+
+        $url = $requestProvider->baseUrl . self::MEMBER_ONBOARDING_URI;
 
         try {
             $response = $this->httpClient->request('POST', $url, [

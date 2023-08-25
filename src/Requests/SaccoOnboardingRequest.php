@@ -17,6 +17,6 @@ class SaccoOnboardingRequest extends BaseRequest
         public string $saccoAccount
     )
     {
-        parent::__construct($saccoId, $this->requestId);
+        parent::__construct($saccoId, $requestId);
     }
 }
