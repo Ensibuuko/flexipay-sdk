@@ -2,50 +2,50 @@
 
 namespace Ensibuuko\Flexipay\Services;
 
-use Ensibuuko\Flexipay\Providers\FlexipayRequestProvider;
+use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
+use Ensibuuko\Flexipay\Providers\RequestProvider;
 use Ensibuuko\Flexipay\Requests\SaccoOnboardingRequest;
 use Ensibuuko\Flexipay\Responses\SaccoOnboardingResponse;
 use Ensibuuko\Flexipay\Exceptions\SaccoOnboardingException;
-use GuzzleHttp\Client;
 
 class SaccoOnboardingService extends FlexipayBaseService
 {
-    const SACCO_ONBOARDING_URI = "/FLEXI_SACCO_API/ONBOARDING";
     const FAILURE_MESSAGE = "Sacco Onbaording Failed: %s";
-
-    public function __construct(
-        public Client $httpClient
-    )
-    {
-    }
 
     /**
      * @param SaccoOnboardingRequest $request
-     * @param FlexipayRequestProvider $requestProvider
+     * @param RequestProvider $requestProvider
      * @return SaccoOnboardingResponse
      * @throws SaccoOnboardingException
+     * @throws SignatureGenerationException
+     * @throws \Ensibuuko\Flexipay\Exceptions\FetchTokenException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function onboard(
-        SaccoOnboardingRequest  $request,
-        FlexipayRequestProvider $requestProvider
-    ): SaccoOnboardingResponse
+    public function onboard(SaccoOnboardingRequest $request, RequestProvider $requestProvider): SaccoOnboardingResponse
     {
-        $token = $this->generateToken($requestProvider->password, $request->requestId);
+        $token = $this->generateToken($requestProvider);
         
-        $headers = [
-            'saccoId' => $request->saccoId,
-            'password' => $requestProvider->password,
-            'client_ID' => $requestProvider->clientId,
-            'token' => $token,
+        $payload = [
+            "saccoId" => $request->saccoId,
+            "saccoName" => $request->saccoName,
+            "saccoAccount" => $request->saccoAccount,
+            "aggregatorID" => $requestProvider->aggregatorID,
+            "requestReference" => $request->requestId,
+            "Amount" => "0"
         ];
 
-        $payload = [
-            'saccoId' => $request->saccoId,
-            'saccoName' => $request->saccoName,
-            'saccoAccount' => $request->saccoAccount,
-            'aggregatorID' => $requestProvider->clientId,
-            'requestReference' => $request->requestId,
-            "Amount" => "0"
+        $content = json_decode($payload);
+
+        $signature = $this->generateRequestSignature($content, $requestProvider->privateKey);
+
+        $headers = [
+            'password' => $requestProvider->password,
+            'X-IBM-Client-Id' => $requestProvider->clientId,
+            'X-IBM-Client-Secret' => $requestProvider->clientSecret,
+            'Authorization' => "Bearer {$token}",
+            'x-signature' => $signature,
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
         ];
 
         $url = $requestProvider->baseUrl . self::SACCO_ONBOARDING_URI;
