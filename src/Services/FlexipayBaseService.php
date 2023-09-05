@@ -6,17 +6,23 @@ use Ensibuuko\Flexipay\Exceptions\FetchTokenException;
 use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
 use Ensibuuko\Flexipay\Providers\RequestProvider;
 use GuzzleHttp\Client;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
 
 abstract class FlexipayBaseService
 {
-    const HASH_ALGO = 'sha256';
+    protected Logger $logger;
     public const TOKEN_URI = "/ug/oauth2/token";
     public const SACCO_ONBOARDING_URI = "/fp/v1.0/Onboarding";
     public const MEMBER_ONBOARDING_URI = "/flexipayws/v1.0/registration/api";
     public const SACCO_DETAILS_URI = "/flexipayws/v1.0/payments/getwalletdetails";
     const SIGNATURE_GENERATION_ERROR_MESSAGE = "Could not generate signature: %s";
 
-    public function __construct(public Client $httpClient) { }
+    public function __construct(public Client $httpClient) {
+        $this->logger = new Logger('flexipay-sdk');
+        $this->logger->pushHandler(new StreamHandler(__DIR__.'../../logs/flexipay.log', Level::Debug));
+    }
 
     /**
      * @param RequestProvider $requestProvider
@@ -37,6 +43,14 @@ abstract class FlexipayBaseService
             'grant_type' => 'client_credentials',
             'scope' => 'Create'
         ];
+        
+        $this->logger->debug(json_encode([
+            'FETCH_FLEXIPAY_TOKEN_REQUEST' => [
+                'Payload' => $data,
+                'Headers' => $headers,
+                'URL' => $url
+            ]
+        ]));
 
         $response = $this->httpClient->request("POST", $url, [
             'headers' => $headers,
@@ -44,6 +58,13 @@ abstract class FlexipayBaseService
         ]);
 
         $contents = json_decode($response->getBody()->getContents(), true);
+
+        $this->logger->debug(json_encode([
+            "FETCH_FLEXIPAY_TOKEN_RESPONSE" => [
+                'Payload' => $contents,
+                'StatusCode' => $response->getStatusCode()
+            ]
+        ]));
 
         if ($response->getStatusCode() >= 200 && $response->getStatusCode() <= 299) {
             return $contents['access_token'];
@@ -65,6 +86,18 @@ abstract class FlexipayBaseService
             return base64_encode($signature);
         }
         $message = sprintf(self::SIGNATURE_GENERATION_ERROR_MESSAGE, openssl_error_string());
+        $this->logger->debug(json_encode([
+            'GENERATE_FLEXIPAY_REQUEST_SIGNATURE_ERROR' => [
+                'content' => $content,
+                'error' => $message
+            ]
+        ]));
         throw new SignatureGenerationException($message);
+    }
+    
+    public function setLoggerHandler(string $file): self
+    {
+        $this->logger->setHandlers([new StreamHandler($file, Level::Debug)]);
+        return $this;
     }
 }

@@ -45,6 +45,13 @@ class WalletDetailsService extends FlexipayBaseService
 
         $url = $requestProvider->baseUrl . self::SACCO_DETAILS_URI;
 
+        $this->logger->debug(json_encode([
+            'FLEXIPAY_WALLET_DETAILS_REQUEST' => [
+                'Payload' => $payload,
+                'URL' => $url
+            ]
+        ]));
+
         try {
             $response = $this->httpClient->request('POST', $url, [
                 'json' => $payload,
@@ -55,6 +62,13 @@ class WalletDetailsService extends FlexipayBaseService
         }
 
         $contents = $response->getBody()->getContents();
+
+        $this->logger->debug(json_encode([
+            "FLEXIPAY_WALLET_DETAILS_RESPONSE" => [
+                'Payload' => $contents,
+                'StatusCode' => $response->getStatusCode()
+            ]
+        ]));
 
         $status = $response->getStatusCode();
         if ($status < 200 || $status > 299) {
