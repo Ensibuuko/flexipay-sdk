@@ -50,6 +50,13 @@ class SaccoOnboardingService extends FlexipayBaseService
 
         $url = $requestProvider->baseUrl . self::SACCO_ONBOARDING_URI;
 
+        $this->logger->debug(json_encode([
+            'FLEXIPAY_SACCO_ONBOARDING_REQUEST' => [
+                'Payload' => $payload,
+                'URL' => $url
+            ]
+        ]));
+
         try {
             $response = $this->httpClient->request('POST', $url, [
                 'json' => $payload,
@@ -60,6 +67,13 @@ class SaccoOnboardingService extends FlexipayBaseService
         }
 
         $contents = $response->getBody()->getContents();
+
+        $this->logger->debug(json_encode([
+            "FLEXIPAY_SACCO_ONBOARDING_RESPONSE" => [
+                'Payload' => $contents,
+                'StatusCode' => $response->getStatusCode()
+            ]
+        ]));
 
         $status = $response->getStatusCode();
         if ($status < 200 || $status > 299) {

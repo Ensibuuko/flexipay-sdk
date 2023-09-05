@@ -66,6 +66,13 @@ class MemberRegistrationService extends FlexipayBaseService
         ];
 
         $url = $requestProvider->baseUrl . self::MEMBER_ONBOARDING_URI;
+        
+        $this->logger->debug(json_encode([
+            'FLEXIPAY_MEMBER_REGISTRATION_REQUEST' => [
+                'Payload' => $payload,
+                'URL' => $url
+            ]
+        ]));
 
         try {
             $response = $this->httpClient->request('POST', $url, [
@@ -77,6 +84,13 @@ class MemberRegistrationService extends FlexipayBaseService
         }
 
         $contents = $response->getBody()->getContents();
+
+        $this->logger->debug(json_encode([
+            "FLEXIPAY_MEMBER_REGISTRATION_RESPONSE" => [
+                'Payload' => $contents,
+                'StatusCode' => $response->getStatusCode()
+            ]
+        ]));
 
         $status = $response->getStatusCode();
         if ($status < 200 || $status > 299) {
