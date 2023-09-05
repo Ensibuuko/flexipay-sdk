@@ -28,7 +28,7 @@ class FlexipayBaseServiceTest extends TestCase
         ];
         $options = [
             'headers' => $headers,
-            'params' => [
+            'form_params' => [
                 'grant_type' => 'client_credentials',
                 'scope' => 'Create'
             ]

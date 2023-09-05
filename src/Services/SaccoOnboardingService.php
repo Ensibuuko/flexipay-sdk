@@ -34,7 +34,7 @@ class SaccoOnboardingService extends FlexipayBaseService
             "Amount" => "0"
         ];
 
-        $content = json_decode($payload);
+        $content = json_encode($payload);
 
         $signature = $this->generateRequestSignature($content, $requestProvider->privateKey);
 
