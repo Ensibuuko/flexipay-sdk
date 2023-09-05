@@ -33,13 +33,14 @@ abstract class FlexipayBaseService
         ];
 
         $url = $requestProvider->baseUrl . self::TOKEN_URI;
+        $data = [
+            'grant_type' => 'client_credentials',
+            'scope' => 'Create'
+        ];
 
         $response = $this->httpClient->request("POST", $url, [
             'headers' => $headers,
-            'params' => [
-                'grant_type' => 'client_credentials',
-                'scope' => 'Create'
-            ]
+            'form_params' => $data
         ]);
 
         $contents = json_decode($response->getBody()->getContents(), true);
