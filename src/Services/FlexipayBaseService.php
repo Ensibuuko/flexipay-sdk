@@ -21,7 +21,7 @@ abstract class FlexipayBaseService
 
     public function __construct(public Client $httpClient) {
         $this->logger = new Logger('flexipay-sdk');
-        $this->logger->pushHandler(new StreamHandler(__DIR__.'../../logs/flexipay.log', Level::Debug));
+        $this->logger->pushHandler(new StreamHandler(__DIR__.'../../../logs/flexipay.log', Level::Debug));
     }
 
     /**
