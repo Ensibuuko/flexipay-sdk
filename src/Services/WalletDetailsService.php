@@ -10,7 +10,7 @@ use Ensibuuko\Flexipay\Exceptions\WalletDetailsException;
 
 class WalletDetailsService extends FlexipayBaseService
 {
-    const FAILURE_MESSAGE = "Fetch Wallet Details Failed: %s";
+    const FAILURE_MESSAGE = "Fetch Flexipay Wallet Details Failed: %s";
 
     /**
      * @param WalletDetailsRequest $request
@@ -28,19 +28,22 @@ class WalletDetailsService extends FlexipayBaseService
     {
         $token = $this->generateToken($requestProvider);
         $payload = [
-            'MSISDN' => $request->msisdn,
-            'REQUEST_ID' => $request->requestId,
-            'CLIENT_ID' => $requestProvider->clientId,
+            'msisdn' => $request->msisdn,
+            'requestId' => $request->requestId,
+            'clientId' => $requestProvider->clientId,
         ];
         
         $content = json_encode($payload);
         $signature = $this->generateRequestSignature($content, $requestProvider->privateKey);
 
         $headers = [
-            'saccoId' => $request->saccoId,
             'password' => $requestProvider->password,
+            'X-IBM-Client-Id' => $requestProvider->clientId,
+            'X-IBM-Client-Secret' => $requestProvider->clientSecret,
             'Authorization' => "Bearer {$token}",
             'x-signature' => $signature,
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
         ];
 
         $url = $requestProvider->baseUrl . self::SACCO_DETAILS_URI;
@@ -78,12 +81,12 @@ class WalletDetailsService extends FlexipayBaseService
         $responseArray = json_decode($contents, true);
 
         return new WalletDetailsResponse(
-            $responseArray['WALLET_NAME'],
-            $responseArray['CURRENCY'],
-            $responseArray['ALLOW_CR'] === 'Y',
-            $responseArray['ALLOW_DR'] === 'Y',
-            $responseArray['STATUSMESSAGE'],
-            $responseArray['STATUS']
+            $responseArray['walletName'],
+            $responseArray['currency'],
+            $responseArray['allowCredit'] === 'Y',
+            $responseArray['allowDebit'] === 'Y',
+            $responseArray['statusDescription'],
+            $responseArray['statusCode']
         );
     }
 }
