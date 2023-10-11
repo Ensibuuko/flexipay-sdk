@@ -41,7 +41,7 @@ class FlexipayBaseServiceTest extends TestCase
             "consented_on" => (new \DateTime())->getTimestamp()
         ];
         $httpClient = $this->mockHttpClient("POST", $url, $options, $mockedResponse, 200);
-        $service = new WalletDetailsService($httpClient);
+        $service = new WalletDetailsService($httpClient, $this->logger);
         $token = $service->generateToken($requestProvider);
         $this->assertNotNull($token);
         $this->assertEquals($mockedResponse['access_token'], $token);
@@ -50,7 +50,7 @@ class FlexipayBaseServiceTest extends TestCase
     public function testGenerateSignatureThrowsAnExceptionWhenPrivateKeyIsNotValid(): void
     {
         $httpClient = new Client();
-        $service = new WalletDetailsService($httpClient);
+        $service = new WalletDetailsService($httpClient, $this->logger);
         $content = random_bytes(64);
         $privateKey = random_bytes(16);
         $this->expectException(SignatureGenerationException::class);
@@ -60,7 +60,7 @@ class FlexipayBaseServiceTest extends TestCase
     public function testSignatureCanBeGenerated(): void
     {
         $httpClient = new Client();
-        $service = new WalletDetailsService($httpClient);
+        $service = new WalletDetailsService($httpClient, $this->logger);
         $content = random_bytes(64);
         $token = $service->generateRequestSignature($content, $this->privateKey);
         $this->assertNotNull($token);
