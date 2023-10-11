@@ -9,10 +9,12 @@ use GuzzleHttp\Psr7\Response;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
+use Monolog\Logger;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected Generator $faker;
+    protected Logger $logger;
     protected string $baseUrl = "http://127.0.0.1";
     protected string $aggregatorId = "ENS";
     protected string $clientId;
@@ -24,6 +26,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->faker = Factory::create();
+        $this->logger = new Logger('flexipay-sdk');
         $this->clientId = $this->faker->uuid();
         $this->clientSecret = $this->faker->uuid();
         $this->password = $this->faker->password;

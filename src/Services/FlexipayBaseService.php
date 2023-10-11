@@ -6,22 +6,21 @@ use Ensibuuko\Flexipay\Exceptions\FetchTokenException;
 use Ensibuuko\Flexipay\Exceptions\SignatureGenerationException;
 use Ensibuuko\Flexipay\Providers\RequestProvider;
 use GuzzleHttp\Client;
-use Monolog\Handler\StreamHandler;
-use Monolog\Level;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 abstract class FlexipayBaseService
 {
-    protected Logger $logger;
     public const TOKEN_URI = "/ug/oauth2/token";
     public const SACCO_ONBOARDING_URI = "/fp/v1.0/Onboarding";
     public const MEMBER_ONBOARDING_URI = "/flexipayws/v1.0/registration/api";
     public const SACCO_DETAILS_URI = "/fp/v1.1/validatewalletdetails";
     const SIGNATURE_GENERATION_ERROR_MESSAGE = "Could not generate signature: %s";
 
-    public function __construct(public Client $httpClient) {
-        $this->logger = new Logger('flexipay-sdk');
-        $this->logger->pushHandler(new StreamHandler(__DIR__.'../../../logs/flexipay.log', Level::Debug));
+    public function __construct(
+        public Client    $httpClient,
+        protected LoggerInterface $logger,
+    )
+    {
     }
 
     /**
@@ -93,11 +92,5 @@ abstract class FlexipayBaseService
             ]
         ]));
         throw new SignatureGenerationException($message);
-    }
-    
-    public function setLoggerHandler(string $file): self
-    {
-        $this->logger->setHandlers([new StreamHandler($file, Level::Debug)]);
-        return $this;
     }
 }
