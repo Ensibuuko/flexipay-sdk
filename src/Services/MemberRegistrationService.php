@@ -49,7 +49,7 @@ class MemberRegistrationService extends FlexipayBaseService
             'clientId' => $requestProvider->clientId,
             'requestId' => $request->requestId,
             'requestTime' => $request->requestTime->format("Y/m/d H:i:s"),
-            'NumberOfRecords' => count($request->customerData),
+            'numberOfRecords' => count($request->customerData),
             'narrative' => $request->narrative,
             'callbackURL' => $request->callbackUrl,
             'customerData' => $customerData,
