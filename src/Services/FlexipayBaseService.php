@@ -12,7 +12,7 @@ abstract class FlexipayBaseService
 {
     public const TOKEN_URI = "/ug/oauth2/token";
     public const SACCO_ONBOARDING_URI = "/fp/v1.0/Onboarding";
-    public const MEMBER_ONBOARDING_URI = "/flexipayws/v1.0/registration/api";
+    public const MEMBER_ONBOARDING_URI = "/fp/v1.0/bulkRegistration";
     public const SACCO_DETAILS_URI = "/fp/v1.1/validatewalletdetails";
     const SIGNATURE_GENERATION_ERROR_MESSAGE = "Could not generate signature: %s";
 

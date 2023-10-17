@@ -32,12 +32,12 @@ class MemberRegistrationService extends FlexipayBaseService
 
         foreach ($request->customerData as $customerDetail) {
             $customer = [
-                'card_no' => $customerDetail->cardNumber,
-                'mobile_number' => $customerDetail->mobileNumber,
+                'cardNumber' => $customerDetail->cardNumber,
+                'mobileNumber' => $customerDetail->mobileNumber,
                 'dob' => $customerDetail->dateOfBirth,
-                'first_name' => $customerDetail->firstName,
-                'second_name' => $customerDetail->secondName,
-                'last_name' => $customerDetail->lastName,
+                'firstName' => $customerDetail->firstName,
+                'secondName' => $customerDetail->secondName,
+                'lastName' => $customerDetail->lastName,
                 'nin' => $customerDetail->nin,
                 'gender' => $customerDetail->gender->name,
                 'occupation' => $customerDetail->occupation,
@@ -46,23 +46,26 @@ class MemberRegistrationService extends FlexipayBaseService
         }
 
         $payload = [
-            'Client_ID' => $requestProvider->clientId,
-            'RequestID' => $request->requestId,
-            'no_of_records' => count($request->customerData),
-            'Narrative' => $request->narrative,
-            'callback_url' => $request->callbackUrl,
-            'customer_data' => $customerData,
+            'clientId' => $requestProvider->clientId,
+            'requestId' => $request->requestId,
+            'requestTime' => $request->requestTime->format("Y/m/d H:i:s"),
+            'NumberOfRecords' => count($request->customerData),
+            'narrative' => $request->narrative,
+            'callbackURL' => $request->callbackUrl,
+            'customerData' => $customerData,
         ];
 
         $content = json_encode($payload);
         $signature = $this->generateRequestSignature($content, $requestProvider->privateKey);
 
         $headers = [
-            'saccoId' => $request->saccoId,
-            'client_ID' => $requestProvider->clientId,
             'password' => $requestProvider->password,
+            'X-IBM-Client-Id' => $requestProvider->clientId,
+            'X-IBM-Client-Secret' => $requestProvider->clientSecret,
             'Authorization' => "Bearer {$token}",
-            'x-signature' => $signature
+            'x-signature' => $signature,
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
         ];
 
         $url = $requestProvider->baseUrl . self::MEMBER_ONBOARDING_URI;
