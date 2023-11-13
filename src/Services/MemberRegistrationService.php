@@ -46,7 +46,7 @@ class MemberRegistrationService extends FlexipayBaseService
         }
 
         $payload = [
-            'clientId' => $requestProvider->clientId,
+            'clientId' => $requestProvider->aggregatorID,
             'requestId' => $request->requestId,
             'requestTime' => $request->requestTime->format('d/m/Y H:i:s'),
             'numberOfRecords' => count($request->customerData),
