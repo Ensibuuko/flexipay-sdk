@@ -6,7 +6,6 @@ class RequestProvider
 {
     public function __construct(
         public string $baseUrl,
-        public string $aggregatorID,
         public string $clientId,
         public string $clientSecret,
         public string $password,

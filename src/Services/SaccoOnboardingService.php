@@ -29,7 +29,7 @@ class SaccoOnboardingService extends FlexipayBaseService
             "saccoId" => $request->saccoId,
             "saccoName" => $request->saccoName,
             "saccoAccount" => $request->saccoAccount,
-            "aggregatorID" => $requestProvider->aggregatorID,
+            "aggregatorID" => $requestProvider->clientId,
             "requestReference" => $request->requestId,
             "Amount" => "0"
         ];
