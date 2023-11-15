@@ -51,6 +51,7 @@ class WalletDetailsService extends FlexipayBaseService
         $this->logger->debug(json_encode([
             'FLEXIPAY_WALLET_DETAILS_REQUEST' => [
                 'Payload' => $payload,
+                'Signature' => $signature,
                 'URL' => $url
             ]
         ]));

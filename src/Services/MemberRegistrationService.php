@@ -73,6 +73,7 @@ class MemberRegistrationService extends FlexipayBaseService
         $this->logger->debug(json_encode([
             'FLEXIPAY_MEMBER_REGISTRATION_REQUEST' => [
                 'Payload' => $payload,
+                'Signature' => $signature,
                 'URL' => $url
             ]
         ]));
