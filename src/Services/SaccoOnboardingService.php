@@ -53,6 +53,7 @@ class SaccoOnboardingService extends FlexipayBaseService
         $this->logger->debug(json_encode([
             'FLEXIPAY_SACCO_ONBOARDING_REQUEST' => [
                 'Payload' => $payload,
+                'Signature' => $signature,
                 'URL' => $url
             ]
         ]));
