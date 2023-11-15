@@ -30,7 +30,7 @@ class WalletDetailsService extends FlexipayBaseService
         $payload = [
             'msisdn' => $request->msisdn,
             'requestId' => $request->requestId,
-            'clientId' => $requestProvider->clientId,
+            'clientId' => $requestProvider->aggregatorID,
         ];
         
         $content = json_encode($payload);
