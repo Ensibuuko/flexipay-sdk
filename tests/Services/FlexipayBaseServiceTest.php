@@ -61,8 +61,31 @@ class FlexipayBaseServiceTest extends TestCase
     {
         $httpClient = new Client();
         $service = new WalletDetailsService($httpClient, $this->logger);
-        $content = random_bytes(64);
+        $payload= [
+            "requestId" => "11418300335289418300",
+            "requestTime" => "16/11/2023 14:37:53",
+            "numberOfRecords" => 1,
+            "clientId" => "TheAggregatorID",
+            "narrative" => "New Member",
+            "callbackURL" => "http://localhost:8080/api/v1/flexipay/member-onboarding/callback",
+            "customerData" => [
+                [
+                    "cardNumber" => "IT38V123046258",
+                    "mobileNumber" => "256773586556",
+                    "dob" => "18/09/2005",
+                    "firstName" => "Yoakim",
+                    "secondName" => null,
+                    "lastName" => "Owor",
+                    "nin" => "IT38V123046258",
+                    "gender" => "MALE",
+                    "occupation" => "Businessman"
+                ]
+            ]
+        ];
+        $content = str_replace('\\', '', json_encode($payload));
+        $expectedSignature = 'zk1ULjoqiA5xpEaJnr0XjTu8nZC7+bA+/R5Pc2E9E38fzO2KesMMBtmSPcE8g8FXWZ4OuDXgz3xVQj4LdgxU7SMUaFITuBRyGShinU+Qk7zwtUkyJGeJcpl3qlxbPZ6+TqEPUWROGraUOWl2oV6GPYrB6UVyu8D8vNz9GwWJO0BtFZuD2QOB1udQ3HUye6X9yGVh1ubRot0puA3K8z48VX5uvDBGdLcqZ/EJLSH+Mnertc3olT0IHeMCCkGlkQs7tKxZNlYsmfflF5WHzc9s4a2HtPPXcjttG0hJyyvPs5bS3+iWqLJ9rxsDZQUmLyp4/wzJRsYkMMm4HACzWXEfvg==';
         $token = $service->generateRequestSignature($content, $this->privateKey);
         $this->assertNotNull($token);
+        $this->assertEquals($expectedSignature, $token);
     }
 }
