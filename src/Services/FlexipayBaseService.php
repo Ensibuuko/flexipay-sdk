@@ -80,6 +80,7 @@ abstract class FlexipayBaseService
      */
     public function generateRequestSignature(string $content, string $privateKey): string
     {
+        $content = str_replace('\\', '', $content);
         $signature = '';
         if (openssl_sign($content, $signature, $privateKey, OPENSSL_ALGO_SHA256)) {
             return base64_encode($signature);
