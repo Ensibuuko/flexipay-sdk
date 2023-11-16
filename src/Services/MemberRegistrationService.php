@@ -40,23 +40,22 @@ class MemberRegistrationService extends FlexipayBaseService
                 'lastName' => $customerDetail->lastName,
                 'nin' => $customerDetail->nin,
                 'gender' => $customerDetail->gender->name,
-                'occupation' => $customerDetail->occupation,
+                'occupation' => $customerDetail->occupation
             ];
             $customerData[] = $customer;
         }
 
         $payload = [
             'requestId' => $request->requestId,
-            'requestTime' => $request->requestTime->format('d/m/Y H:i:s'),
+            'requestTime' => $request->requestTime,
             'numberOfRecords' => count($request->customerData),
             'clientId' => $requestProvider->aggregatorID,
             'narrative' => $request->narrative,
             'callbackURL' => $request->callbackUrl,
-            'customerData' => $customerData,
+            'customerData' => $customerData
         ];
 
-        $content = json_encode($payload);
-        $signature = $this->generateRequestSignature($content, $requestProvider->privateKey);
+        $signature = $this->generateRequestSignature(json_encode($payload), $requestProvider->privateKey);
 
         $headers = [
             'password' => $requestProvider->password,

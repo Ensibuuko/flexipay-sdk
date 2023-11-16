@@ -30,11 +30,10 @@ class WalletDetailsService extends FlexipayBaseService
         $payload = [
             'msisdn' => $request->msisdn,
             'requestId' => $request->requestId,
-            'clientId' => $requestProvider->aggregatorID,
+            'clientId' => $requestProvider->aggregatorID
         ];
-        
-        $content = json_encode($payload);
-        $signature = $this->generateRequestSignature($content, $requestProvider->privateKey);
+
+        $signature = $this->generateRequestSignature(json_encode($payload), $requestProvider->privateKey);
 
         $headers = [
             'password' => $requestProvider->password,
